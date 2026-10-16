@@ -12,6 +12,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import FileResponse, Response
+from starlette.concurrency import run_in_threadpool
 
 from . import catalog
 from .queries import ChatRequest, answer
@@ -25,7 +26,7 @@ def madrid_today() -> date:
     return datetime.now(ZoneInfo("Europe/Madrid")).date()
 
 
-def create_app(database_path: Path | None = None, clock: Callable[[], date] = madrid_today) -> FastAPI:
+def create_app(database_path: Path | None = None, clock: Callable[[], date] = madrid_today, *, prepare_rag_on_startup: bool = False, rag_factory=None, rag_root: Path | None = None) -> FastAPI:
     database_path = database_path or Path(os.getenv("FOLIO_DATABASE", str(ROOT / "data" / "folio.sqlite3")))
     if not database_path.is_absolute():
         database_path = ROOT / database_path
@@ -33,6 +34,8 @@ def create_app(database_path: Path | None = None, clock: Callable[[], date] = ma
     @asynccontextmanager
     async def lifespan(application: FastAPI):
         catalog.initialize(database_path)
+        if prepare_rag_on_startup:
+            await run_in_threadpool(application.state.get_rag_service().prepare)
         yield
 
     application = FastAPI(title="Folio · API editorial", version="0.1.0", lifespan=lifespan)
@@ -112,6 +115,9 @@ def create_app(database_path: Path | None = None, clock: Callable[[], date] = ma
         for book in records():
             writer.writerow([book[k] for k in ("id", "title", "author", "publisher", "publication_date", "genre", "language", "fragment")] + ["Datos ficticios de demostración"])
         return Response("\ufeff" + stream.getvalue(), media_type="text/csv; charset=utf-8", headers={"Content-Disposition": 'attachment; filename="folio-catalogo-demo.csv"'})
+
+    from .rag_api import install_rag
+    install_rag(application, database_path, rag_root or ROOT, clock, rag_factory)
 
     @application.get("/{path:path}", include_in_schema=False)
     def frontend(path: str):

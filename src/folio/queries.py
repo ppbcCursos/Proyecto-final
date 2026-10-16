@@ -14,7 +14,7 @@ MONTHS = ("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agost
 
 
 class ChatRequest(BaseModel):
-    message: str = Field(min_length=1, max_length=1000)
+    message: str = Field(min_length=1, max_length=4000)
     year: int | None = Field(default=None, ge=1, le=9999)
     month: int | None = Field(default=None, ge=1, le=12)
 

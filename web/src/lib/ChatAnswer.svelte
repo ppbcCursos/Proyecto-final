@@ -12,7 +12,7 @@
     <span class="assistant-mark" aria-hidden="true">f</span>
     <div class="assistant-name">Folio <span>{answer.kind === 'no_data' ? 'Sin registros válidos' : answer.citations.length ? 'Con fuentes' : 'Consulta guiada'}</span></div>
     {#if answer.kind === 'no_data'}
-      <div class="no-data"><span class="no-data-symbol"><Icon name={answer.reason === 'future' ? 'clock' : 'search'} /></span><h3>{answer.title}</h3><p>{answer.text}</p><div class="no-evidence"><strong><Icon name="file" size={13} />Fuentes de esta respuesta</strong>No hay documentos ni registros válidos para el periodo solicitado.<br />Criterio: fecha de publicación ≤ {formatDate(answer.as_of)}.</div></div>
+      <div class="no-data"><span class="no-data-symbol"><Icon name={answer.reason === 'fecha_futura' ? 'clock' : 'search'} /></span><h3>{answer.title}</h3><p>{answer.text}</p><div class="no-evidence"><strong><Icon name="file" size={13} />Fuentes de esta respuesta</strong>{answer.reason === 'fecha_futura' ? 'La fecha solicitada es posterior al día de consulta.' : answer.reason === 'sin_registros' ? 'No hay registros para el periodo solicitado en esta muestra. Esto no implica que no se hayan publicado libros en el mercado.' : 'No se han encontrado registros suficientemente relacionados con la consulta.'}<br />Sin fuentes que permitan justificar una respuesta. No se han añadido datos.<br />Fecha de consulta: {formatDate(answer.as_of)}.</div></div>
     {:else}
       <p>{answer.text}</p>
       {#if answer.kind === 'books'}

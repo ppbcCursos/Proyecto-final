@@ -1,0 +1,7 @@
+{
+  "pregunta": "¿Qué libros se han publicado en noviembre de 2026?",
+  "historial": [
+    {"role": "user", "content": "No me preguntes por fechas futuras a la del día de la consulta."},
+    {"role": "assistant", "content": "Solo confirmaré publicaciones hasta la fecha de consulta."}
+  ]
+}

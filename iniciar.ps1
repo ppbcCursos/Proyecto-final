@@ -20,7 +20,7 @@ $runtime = Join-Path $root '.runtime'
 New-Item -ItemType Directory -Path $runtime -Force | Out-Null
 $services = @()
 try {
-    $backend = Start-Process -FilePath $uvCommand.Source -ArgumentList @('run', 'python', '-m', 'uvicorn', 'folio.api:app', '--host', '127.0.0.1', '--port', '8000', '--reload', '--reload-dir', 'src') -WorkingDirectory $root -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $runtime 'backend.out.log') -RedirectStandardError (Join-Path $runtime 'backend.err.log')
+    $backend = Start-Process -FilePath $uvCommand.Source -ArgumentList @('run', 'servidor.py') -WorkingDirectory $root -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $runtime 'backend.out.log') -RedirectStandardError (Join-Path $runtime 'backend.err.log')
     $services += @{ pid = $backend.Id; started_utc_ticks = $backend.StartTime.ToUniversalTime().Ticks; name = 'backend' }
     $frontend = Start-Process -FilePath $nodeCommand.Source -ArgumentList @(('"' + $viteFile + '"'), '--host', '127.0.0.1', '--port', '5173', '--strictPort') -WorkingDirectory (Join-Path $root 'web') -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $runtime 'web.out.log') -RedirectStandardError (Join-Path $runtime 'web.err.log')
     $services += @{ pid = $frontend.Id; started_utc_ticks = $frontend.StartTime.ToUniversalTime().Ticks; name = 'web' }

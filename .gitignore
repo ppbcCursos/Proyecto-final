@@ -22,6 +22,7 @@ web/.vite/
 # Local database and runtime output
 data/*.db*
 data/*.sqlite*
+data/rag/
 *.db
 *.db-*
 *.sqlite

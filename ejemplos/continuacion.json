@@ -1,0 +1,7 @@
+{
+  "pregunta": "¿Y qué editoriales y cuántos libros ha publicado cada una?",
+  "historial": [
+    {"role": "user", "content": "¿Qué libros se han publicado en septiembre de 2026?"},
+    {"role": "assistant", "content": "En septiembre de 2026 constan seis libros en el catálogo de demostración."}
+  ]
+}
